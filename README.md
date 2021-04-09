@@ -1,2 +1,3 @@
-# InfineonXMC
-Infineon XMC I debugged
+README
+=============
+    The Infineon/XMC seires I debugged in keil MDK.
