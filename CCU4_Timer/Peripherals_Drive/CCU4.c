@@ -7,7 +7,7 @@ CCU40 CC40 Timer¶¨Ê±Æ÷
 #include "CCU4.h"
 
 #define CCU40_CC40_DIV_VAL	12
-#define CCU40_CC40_PRS_VAL	0xFFFF    //Timer = (1/120 000 000)*(2^DIV_VAL)*PRS_VAL
+#define CCU40_CC40_PRS_VAL	14648    //Timer  (1/120 000 000)*(2^DIV_VAL)*PRS_VAL s    ~0.5s
 
 void CCU4_Init(void)
 {
