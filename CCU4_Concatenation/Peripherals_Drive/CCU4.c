@@ -8,11 +8,11 @@ CCU40 CC42 Counter
 #include <XMC4400.h>
 #include "CCU4.h"
 
-#define CCU40_CC40_DIV_VAL	12
-#define CCU40_CC40_PRS_VAL	14648    //Timer  (1/120 000 000)*(2^DIV_VAL)*(PRS_VAL+1) s    ~0.5s
+#define CCU40_CC40_DIV_VAL	0
+#define CCU40_CC40_PRS_VAL	5999    //Timer  (1/120 000 000)*(2^DIV_VAL)*(PRS_VAL+1) s    
 
-#define CCU40_CC41_DIV_VAL	12
-#define CCU40_CC41_PRS_VAL	2        //Contatenation ~0.5s*(PRS_VAL+1) 1.5s 进一次周期中断  
+#define CCU40_CC41_DIV_VAL	0
+#define CCU40_CC41_PRS_VAL	9999    //Contatenation *(PRS_VAL+1)  0.5s 进一次周期中断 
                                      //xdm有没有注意到，这样一来就可以实现32位定时了，分频可以低一点，定时值大一点，定时更加精准
 
 #define CCU40_CC42_DIV_VAL  4
