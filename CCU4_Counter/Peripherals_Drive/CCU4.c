@@ -8,7 +8,7 @@ CCU40 CC41 Counter¼ÆÊýÆ÷
 #include "CCU4.h"
 
 #define CCU40_CC40_DIV_VAL	12
-#define CCU40_CC40_PRS_VAL	14648    //Timer  (1/120 000 000)*(2^DIV_VAL)*PRS_VAL s    ~0.5s
+#define CCU40_CC40_PRS_VAL	14648    //Timer  (1/120 000 000)*(2^DIV_VAL)*(PRS_VAL+1) s    ~0.5s
 
 #define CCU40_CC41_DIV_VAL  4
 #define CCU40_CC41_PRS_VAL  60       //Counter
