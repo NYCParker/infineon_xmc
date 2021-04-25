@@ -1,0 +1,21 @@
+--cpu=Cortex-M4.fp
+".\objects\main.o"
+".\objects\gpio.o"
+".\objects\var_init.o"
+".\objects\sys_task.o"
+".\objects\irq_handle.o"
+".\objects\list.o"
+".\objects\task.o"
+".\objects\xmc4_gpio.o"
+".\objects\xmc4_scu.o"
+".\objects\xmc_common.o"
+".\objects\xmc_dac.o"
+".\objects\xmc_gpio.o"
+".\objects\xmc_uart.o"
+".\objects\xmc_usic.o"
+".\objects\startup_xmc4400.o"
+".\objects\system_xmc4400.o"
+--strict --scatter ".\Objects\DEMO.sct"
+--summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list ".\Listings\DEMO.map" -o .\Objects\DEMO.axf
