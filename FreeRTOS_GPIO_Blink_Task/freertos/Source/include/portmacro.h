@@ -26,5 +26,21 @@
 	typedef uint32_t TickType_t;
 	#define portMAX_DELAY ( TickType_t ) 0xffffffffUL     //宏configUSE_16_BIT_TICKS默认为0 TickType_t表示32位 uint32
 	#endif
+	
+#define portNVIC_INT_CTRL_REG (*(( volatile uint32_t *) 0xe000ed04)) 
+#define portNVIC_PENDSVSET_BIT ( 1UL << 28UL )	
+#define portSY_FULL_READ_WRITE ( 15 )
+
+#define portYIELD() \
+{ \
+/* 触发 PendSV，产生上下文切换 */ \
+portNVIC_INT_CTRL_REG = portNVIC_PENDSVSET_BIT; \
+__dsb( portSY_FULL_READ_WRITE ); \
+__isb( portSY_FULL_READ_WRITE ); \
+}
+
+//portYIELD实际就是将 PendSV 的悬起位置 1，当没有其它中断运行的时候响应 PendSV 中断(优先级最低），
+//去执行我们写好的 PendSV中断服务函数，在里面实现任务切换
+//任务切换的本质是通过触发 PendSV 中断，在中断中执行任务切换
 
 #endif /* PORTMACRO_H */

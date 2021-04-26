@@ -1,7 +1,8 @@
 #include "Task.h"
-#include "projdefs.h"
-#include "FreeRTOS.h"
-#include "portmacro.h"
+
+//¶¨Òå¾ÍĞ÷ÁĞ±í
+List_t pxReadyTasksList[configMAX_PRIORITIES];  //Í¬Ò»ÓÅÏÈ¼¶µÄÈÎÎñ¾Í²åÈëµ½¾ÍĞ÷ÁĞ±íµÄÍ¬Ò»ÌõÁ´±íÖĞ
+TCB_t* volatile pxCurrentTCB = NULL;
 
 //¾²Ì¬ÈÎÎñ´´½¨º¯Êı£¨ĞèÒª×Ô¼ºÖ¸¶¨ÈÎÎñÕ»£©
 #if( configSUPPORT_STATIC_ALLOCATION == 1 )
@@ -14,23 +15,35 @@ TaskHandle_t xTaskCreateStatic(	TaskFunction_t pxTaskCode,           //ÈÎÎñÈë¿Úµ
 					            TCB_t * const pxTaskBuffer )         //ÈÎÎñ¿ØÖÆ¿éÖ¸Õë
 {
 	TCB_t *pxNewTCB;
-	TaskHandle_t xReturen;
+	TaskHandle_t xReturn;
 	
 	if((pxTaskBuffer != NULL)&&(puxStackBuffer != NULL))
 	{
 		pxNewTCB = (TCB_t*) pxTaskBuffer;  //µØÖ·¸øpxNewTCB
-		pxNewTCB->pxStack = (StackType_t *)puxStackBuffer; //ÈÎÎñÕ»µÄÆğÊ¼µØÖ·
-	}
+		pxNewTCB->pxStack = (StackType_t *)puxStackBuffer; /*½«ÈÎÎñÕ»µÄÆğÊ¼µØÖ·´¢´æÈÎÎñ¿ØÖÆ¿é*/
 	
-	return xReturen;
+	prvInitialiseNewTask( pxTaskCode,        //ÈÎÎñÈë¿Ú
+                          pcName,            //ÈÎÎñÃû³Æ£¬×Ö·û´®ĞÎÊ½
+                          ulStackDepth,      //ÈÎÎñÕ»´óĞ¡£¬µ¥Î»Îª×Ö */ 
+                          pvParameters,      //ÈÎÎñĞÎ²Î */
+                          &xReturn,          //*****ÈÎÎñ¾ä±ú ÕâÀïÓÃ&xReturn Ö¸ÕëµÄµØÖ· ËùÒÔÕâ¸öº¯Êı¶¨ÒåµÄÊ±ºòÊÇ¸ö¶ş¼¶Ö¸Õë
+                          pxNewTCB);         //ÈÎÎñÕ»ÆğÊ¼µØÖ·
+	}
+	else
+	{
+		xReturn = NULL;
+	}
+	return xReturn;
 }
 
+#endif /* configSUPPORT_STATIC_ALLOCATION */
 
+//
 static void prvInitialiseNewTask( 	TaskFunction_t pxTaskCode,              //ÈÎÎñÈë¿Ú
 									const char * const pcName,              //º¯ÊıÃû
 									const uint32_t ulStackDepth,            //ÈÎÎñÕ»´óĞ¡
 									void * const pvParameters,              //´«µİ¸øÈÎÎñµÄ²ÎÊı
-									TaskHandle_t * const pxCreatedTask,     //*****ÈÎÎñ¾ä±ú
+									TaskHandle_t * const pxCreatedTask,     //*****ÈÎÎñ¾ä±úTaskHandle_t pxCreatedTaskÊÇ¸öÖ¸ÏòÖ¸ÕëµÄÖ¸Õë
 									TCB_t *pxNewTCB )                       //ÈÎÎñ¿ØÖÆ¿éÖ¸Õë
 {
 	StackType_t *pxTopOfStack;
@@ -40,9 +53,57 @@ static void prvInitialiseNewTask( 	TaskFunction_t pxTaskCode,              //ÈÎÎ
 	pxTopOfStack = (StackType_t *) \
 	               ( ( ( uint32_t ) pxTopOfStack ) & ( ~( ( uint32_t ) 0x0007 ) ) ); //ÏòÏÂ×ö8×Ö½Ú¶ÔÆë£¨ÄşÔ¸Éáµã²»ÓÃ£¬±£Ö¤M4µØÖ··ÃÎÊ²»³öÎÊÌâ£©
 	
+	for(x=(UBaseType_t)0;  x<(UBaseType_t) configMAX_TASK_NAME_LEN; x++) /*½«ÈÎÎñÃû×Ö´«µİ¸øÈÎÎñ¿ØÖÆ¿é*/
+	{                                                                    //pcName×÷ÎªÍ¬ÃûÖ¸Õë£¬ÕâÀïÓÖ±ä³ÉÊı×éÀ´ÓÃÁË
+		pxNewTCB->pctaskName[x] = pcName[x];
+		if(pcName[x] == 0x00)
+		{
+			break;
+		}
+	}
+	pxNewTCB->pctaskName[configMAX_TASK_NAME_LEN-1] = '\0';
 	
+	vListInitialiseItem(&(pxNewTCB->xStateListItem));   /*³õÊ¼»¯ÈÎÎñ¿ØÖÆ¿éÖĞµÄÁ´±í½Úµã*/
+	listSET_LIST_ITEM_OWNER(&(pxNewTCB->xStateListItem),pxNewTCB); /*³õÊ¼»¯Á´±í½ÚµãµÄpvOwnerµØÖ·ÎªpxNewTCBµÄµØÖ·£¨¼´Ö¸ÏòÈÎÎñ¿ØÖÆ¿é£©*/
 	
+	pxNewTCB->pxTopOfStack = pxPortInitialiseStack(pxTopOfStack, pxTaskCode, pvParameters);  //³õÊ¼»¯ÈÎÎñÕ»
 	
+	if((void*)pxCreatedTask != NULL)
+	{
+		*pxCreatedTask = (TaskFunction_t)pxNewTCB;         //ÁªÏµº¯Êı¶¨ÒåºÍÊ¹ÓÃ£¬pxCreatedTask±£´æÖ¸ÕëxreturnµÄµØÖ·£¬¼´xreturn = (TaskFunction_t)pxNewTCB£»
+		                                                   //ÈÎÎñ´´½¨º¯Êı¾ÍÄÜ·µ»ØÒ»¸öÖ¸ÏòÈÎÎñ¿ØÖÆ¿ìµÄÖ¸ÕëxReturn
+	}	
 }
-#endif /* configSUPPORT_STATIC_ALLOCATION */
 
+//³õÊ¼»¯¾ÍĞ÷ÁĞ±í
+void prvInitialiseTaskLists(void)
+{
+	UBaseType_t uxPriority;
+	
+	for(uxPriority = ( UBaseType_t ) 0U; uxPriority < ( UBaseType_t ) configMAX_PRIORITIES; uxPriority++)
+	{
+		vListInitialise( &(pxReadyTasksList[uxPriority]) );
+	}
+}
+
+//ÊÖ¶¯µ÷¶ÈÆ÷
+void vTaskStartScheduler(void)
+{
+	pxCurrentTCB = &Task1TCB;      //ÊÖ¶¯Ö¸¶¨µÚÒ»¸öÔËĞĞµÄÈÎÎñ
+	if( xPortStartScheduler()!=pdFALSE)
+	{
+		
+	}
+}
+
+void vTaskSwitchContext( void )
+{
+if ( pxCurrentTCB == &Task1TCB )   //Á½¸öÈÎÎñÂÖÁ÷ÇĞ»»
+{
+	pxCurrentTCB = &Task2TCB;
+}
+else
+{
+	pxCurrentTCB = &Task1TCB;
+}
+}

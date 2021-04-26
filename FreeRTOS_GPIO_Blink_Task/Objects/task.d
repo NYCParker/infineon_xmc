@@ -1,9 +1,0 @@
-.\objects\task.o: freertos\Source\Task.c
-.\objects\task.o: .\freertos\Source\include\Task.h
-.\objects\task.o: .\freertos\Source\include\portmacro.h
-.\objects\task.o: D:\keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
-.\objects\task.o: D:\keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
-.\objects\task.o: .\freertos\Source\include\FreeRTOSConfig.h
-.\objects\task.o: .\freertos\Source\include\projdefs.h
-.\objects\task.o: .\freertos\Source\include\FreeRTOS.h
-.\objects\task.o: .\freertos\Source\include\list.h

@@ -338,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.\Peripherals_Drive;.\SYSTEM;.\freertos\Source\include</IncludePath>
+              <IncludePath>.\Peripherals_Drive;.\SYSTEM;.\freertos\Source\include;.\freertos\portable\RVDS\ARM_CM4</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -413,6 +413,11 @@
               <FilePath>.\SYSTEM\Sys_Task.c</FilePath>
             </File>
             <File>
+              <FileName>Sys_List.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\SYSTEM\Sys_List.c</FilePath>
+            </File>
+            <File>
               <FileName>Irq_Handle.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\SYSTEM\Irq_Handle.c</FilePath>
@@ -441,6 +446,16 @@
               <FileName>Task.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\freertos\Source\include\Task.h</FilePath>
+            </File>
+            <File>
+              <FileName>port.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\freertos\portable\RVDS\ARM_CM4\port.c</FilePath>
+            </File>
+            <File>
+              <FileName>port.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\freertos\portable\RVDS\ARM_CM4\port.h</FilePath>
             </File>
             <File>
               <FileName>portmacro.h</FileName>

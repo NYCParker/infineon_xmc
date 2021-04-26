@@ -10,10 +10,23 @@ portBASE_TYPE 类型变量的前缀是 x。
 因此，当我们定义一个无符号的 char 型变量的时候会加一个 uc 前缀，
 当定义一个char 型的指针变量的时候会有一个 pc 前缀*/
 
+#define xPortPendSVHandler PendSV_Handler
+#define xPortSysTickHandler SysTick_Handler
+#define vPortSVCHandler SVC_Handler
+
 #ifndef FREERTOS_CONFIG_H
 #define FREERTOS_CONFIG_H
 
 #define configUSE_16_BIT_TICKS 0
 #define configMAX_TASK_NAME_LEN 16
 #define configSUPPORT_STATIC_ALLOCATION 1
+#define configMAX_PRIORITIES 5
+
+#define configPRIO_BITS       		6 
+#define configLIBRARY_LOWEST_INTERRUPT_PRIORITY			0x3f
+#define configKERNEL_INTERRUPT_PRIORITY 		( configLIBRARY_LOWEST_INTERRUPT_PRIORITY << (8 - configPRIO_BITS) )
+
+#define configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY	5 
+#define configMAX_SYSCALL_INTERRUPT_PRIORITY 	( configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY << (8 - configPRIO_BITS) )
+
 #endif /* FREERTOS_CONFIG_H */
