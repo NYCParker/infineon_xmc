@@ -41,8 +41,10 @@ __asm void prvStartFirstTask(void)
 	ldr r0, [r0]          //取出向量表第一项，向量表第一项储存主堆栈指针MSP的初始值（也就是向量表的起始地址）（memory的起始地址）
 	ldr r0, [r0]          //起始地址指向的内容加载到r0
 	
-	msr msp, r0           //将 R0 的值存储到 MSP，此时 MSP 等于 0x200008DB，这是主堆栈的栈顶指针。起始这一步操作有点多余，   //主栈的栈顶指针
+	msr msp, r0           //将 R0 的值存储到 MSP，这是主堆栈的栈顶指针。起始这一步操作有点多余，   //主栈的栈顶指针
 	                      //因为当系统启动的时候，执行完 Reset_Handler的时候， 向量表已经初始化完毕， MSP 的值就已经更新为向量表的起始值，即指向主堆栈的栈顶指针
+	                      // 测试发现不一样
+	
 	cpsie i               //开中断
 	cpsie f               //开异常
 	dsb                   //数据同步隔离
@@ -60,7 +62,7 @@ __asm void prvStartFirstTask(void)
 BaseType_t xPortStartScheduler(void)
 {
 	portNVIC_SYSPRI2_REG |= portNVIC_PENDSV_PRI;
-	portNVIC_SYSPRI2_REG |= portNVIC_SYSTICK_PRI; //两个异常的优先级都设置最低
+	portNVIC_SYSPRI2_REG |= portNVIC_SYSTICK_PRI; //两个异常的优先级都设置最低 63（高六位有效）
 	
 	//启动第一个任务不再返回
 	prvStartFirstTask();
