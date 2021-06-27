@@ -17,8 +17,8 @@ void IRQ_Enable(void)
 	NVIC_ClearPendingIRQ(CCU40_1_IRQn);	
 	NVIC_EnableIRQ(CCU40_1_IRQn);	
 	
-	NVIC_ClearPendingIRQ(ERU0_0_IRQn);		//This function clears node 1 pending status
-	NVIC_EnableIRQ(ERU0_0_IRQn);			//This function enables node 1 for interrupt request generation
+	NVIC_ClearPendingIRQ(ERU0_0_IRQn);		
+	NVIC_EnableIRQ(ERU0_0_IRQn);			
 }
 
 void CCU40_0_IRQHandler(void)
